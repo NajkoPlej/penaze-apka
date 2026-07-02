@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="sk" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WealthPair | Finančná aplikácia</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <style>
+      body { background:#0F1115; color:#e2e2e8; -webkit-tap-highlight-color:transparent; }
+      .material-symbols-outlined { font-variation-settings:'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+      .glass-card { background:rgba(28,31,38,0.7); backdrop-filter:blur(20px); border:1px solid rgba(183,196,255,0.12); }
+      .hide-scrollbar::-webkit-scrollbar{display:none;}
+      .hide-scrollbar{-ms-overflow-style:none; scrollbar-width:none;}
+      .page { display:none; }
+      .page.active { display:block; }
+      .nav-item.active { color:#b7c4ff; }
+    </style>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              secondary:'#43ed9e', primary:'#b7c4ff', tertiary:'#ffb3ae', background:'#111317', surface:'#111317', 'surface-container':'#1e2024', 'surface-container-high':'#282a2e', 'surface-container-low':'#1a1c20', 'on-surface':'#e2e2e8', 'on-surface-variant':'#c3c5d8', 'on-primary':'#002681', 'on-primary-container':'#f7f6ff', 'on-background':'#e2e2e8', 'outline':'#8d90a2', error:'#ffb4ab'
+            }
+          }
+        }
+      };
+    </script>
+  </head>
+  <body class="min-h-screen pb-32">
+    <header class="sticky top-0 z-50 flex items-center justify-between px-5 py-3 bg-surface/70 backdrop-blur-xl">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 overflow-hidden rounded-full border border-primary/20">
+          <img class="h-full w-full object-cover" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=200&q=80" alt="WealthPair" />
+        </div>
+        <div>
+          <h1 class="text-lg font-semibold text-primary">WealthPair</h1>
+          <p class="text-xs text-on-surface-variant">Vaša rodinná finančná kontrola</p>
+        </div>
+      </div>
+      <div class="rounded-full border border-primary/20 px-3 py-1 text-sm text-primary">Online</div>
+    </header>
+
+    <main class="mx-auto max-w-5xl px-4 py-4">
+      <section id="dashboard-page" class="page active space-y-4">
+        <div class="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 to-secondary/10 p-5 shadow-lg">
+          <p class="text-sm text-on-surface-variant">Bezpečne na výdaje</p>
+          <div class="mt-2 flex items-end gap-2">
+            <span class="text-4xl font-semibold text-primary">€</span>
+            <span id="safe-amount" class="text-4xl font-semibold text-on-background">0.00</span>
+          </div>
+          <p id="safe-message" class="mt-2 text-sm text-on-surface-variant">Ste na dobrej ceste k mesačným cieľom.</p>
+        </div>
+
+        <div class="grid gap-3 md:grid-cols-3">
+          <div class="glass-card rounded-xl p-4">
+            <p class="text-sm text-on-surface-variant">Bilancia</p>
+            <p id="balance-value" class="mt-1 text-xl font-semibold text-on-background">€0.00</p>
+          </div>
+          <div class="glass-card rounded-xl p-4">
+            <p class="text-sm text-on-surface-variant">Rezervované</p>
+            <p id="reserved-value" class="mt-1 text-xl font-semibold text-tertiary">€0.00</p>
+          </div>
+          <div class="glass-card rounded-xl p-4">
+            <p class="text-sm text-on-surface-variant">Mesačné výdavky</p>
+            <p id="expenses-value" class="mt-1 text-xl font-semibold text-on-background">€0.00</p>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-xl p-4">
+          <div class="mb-3 flex items-center justify-between">
+            <h2 class="text-lg font-semibold">Najnovšie aktivity</h2>
+            <button onclick="navigate('transactions')" class="text-sm text-primary">Zobraziť všetko</button>
+          </div>
+          <div id="recent-activity" class="space-y-2"></div>
+        </div>
+      </section>
+
+      <section id="transactions-page" class="page space-y-4">
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+          <input id="transaction-search" class="w-full rounded-xl border-0 bg-surface-container py-3 pl-10 pr-3 text-on-background focus:ring-0" placeholder="Hľadať transakcie..." />
+        </div>
+        <div class="hide-scrollbar flex gap-2 overflow-x-auto">
+          <button class="category-pill rounded-full bg-primary px-4 py-2 text-sm font-medium text-on-primary" onclick="setFilter('Všetko')">Všetko</button>
+          <button class="category-pill rounded-full bg-surface-container px-4 py-2 text-sm text-on-surface-variant" onclick="setFilter('Jedlo')">🍔 Jedlo</button>
+          <button class="category-pill rounded-full bg-surface-container px-4 py-2 text-sm text-on-surface-variant" onclick="setFilter('Nákupy')">🛍️ Nákupy</button>
+          <button class="category-pill rounded-full bg-surface-container px-4 py-2 text-sm text-on-surface-variant" onclick="setFilter('Doprava')">🚗 Doprava</button>
+          <button class="category-pill rounded-full bg-surface-container px-4 py-2 text-sm text-on-surface-variant" onclick="setFilter('Zábava')">🎬 Zábava</button>
+          <button class="category-pill rounded-full bg-surface-container px-4 py-2 text-sm text-on-surface-variant" onclick="setFilter('Faktúry')">🧾 Faktúry</button>
+          <button class="category-pill rounded-full bg-surface-container px-4 py-2 text-sm text-on-surface-variant" onclick="setFilter('Príjem')">💰 Príjem</button>
+        </div>
+        <div id="transactions-list" class="space-y-3"></div>
+      </section>
+
+      <section id="bills-page" class="page space-y-4">
+        <div class="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 to-secondary/10 p-5">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-on-surface-variant">Zostávajúce financiie</p>
+              <p id="bills-remaining" class="text-2xl font-semibold text-primary">€0.00</p>
+            </div>
+            <button onclick="openBillModal()" class="rounded-full bg-primary px-4 py-2 text-sm font-medium text-on-primary">+ Pridať faktúru</button>
+          </div>
+        </div>
+        <div id="bills-list" class="space-y-3"></div>
+      </section>
+
+      <section id="stats-page" class="page space-y-4">
+        <div class="glass-card rounded-xl p-4">
+          <h2 class="mb-3 text-lg font-semibold">Štatistiky výdavkov</h2>
+          <div id="stats-list" class="space-y-3"></div>
+        </div>
+      </section>
+    </main>
+
+    <button class="fixed bottom-28 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-3xl text-on-primary shadow-lg" onclick="openTransactionModal('add')">
+      <span class="material-symbols-outlined">add</span>
+    </button>
+
+    <nav class="fixed bottom-0 left-0 z-50 flex w-full items-center justify-around bg-surface/80 px-4 pb-6 pt-3 backdrop-blur-xl shadow-[0px_-10px_30px_rgba(0,0,0,0.5)]">
+      <button class="nav-item flex flex-col items-center text-on-surface-variant active:text-primary" onclick="navigate('dashboard')">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="text-xs">Prehľad</span>
+      </button>
+      <button class="nav-item flex flex-col items-center text-on-surface-variant" onclick="navigate('transactions')">
+        <span class="material-symbols-outlined">receipt_long</span>
+        <span class="text-xs">Transakcie</span>
+      </button>
+      <button class="nav-item flex flex-col items-center text-on-surface-variant" onclick="navigate('bills')">
+        <span class="material-symbols-outlined">calendar_today</span>
+        <span class="text-xs">Faktúry</span>
+      </button>
+      <button class="nav-item flex flex-col items-center text-on-surface-variant" onclick="navigate('stats')">
+        <span class="material-symbols-outlined">query_stats</span>
+        <span class="text-xs">Štatistiky</span>
+      </button>
+    </nav>
+
+    <div id="transaction-modal" class="fixed inset-0 z-[100] hidden items-end justify-center bg-background/80 p-4 backdrop-blur-md sm:items-center">
+      <div class="w-full max-w-md rounded-2xl border border-outline/20 bg-surface-container p-5">
+        <div class="mb-4 flex items-center justify-between">
+          <h3 id="modal-title" class="text-xl font-semibold text-primary">Pridať transakciu</h3>
+          <button onclick="closeTransactionModal()" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <form id="transaction-form" class="space-y-3">
+          <input id="transaction-id" type="hidden" />
+          <div>
+            <label class="mb-1 block text-sm text-on-surface-variant">Popis</label>
+            <input id="transaction-desc" class="w-full rounded-lg border-0 bg-surface-container-high px-3 py-2 text-on-background focus:ring-0" required />
+          </div>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label class="mb-1 block text-sm text-on-surface-variant">Suma</label>
+              <input id="transaction-amount" type="number" step="0.01" class="w-full rounded-lg border-0 bg-surface-container-high px-3 py-2 text-on-background focus:ring-0" required />
+            </div>
+            <div>
+              <label class="mb-1 block text-sm text-on-surface-variant">Kategória</label>
+              <select id="transaction-category" class="w-full rounded-lg border-0 bg-surface-container-high px-3 py-2 text-on-background focus:ring-0">
+                <option value="Jedlo">🍔 Jedlo</option>
+                <option value="Nákupy">🛍️ Nákupy</option>
+                <option value="Doprava">🚗 Doprava</option>
+                <option value="Zábava">🎬 Zábava</option>
+                <option value="Faktúry">🧾 Faktúry</option>
+                <option value="Príjem">💰 Príjem</option>
+                <option value="Iné">✨ Iné</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="mb-1 block text-sm text-on-surface-variant">Dátum</label>
+            <input id="transaction-date" type="date" class="w-full rounded-lg border-0 bg-surface-container-high px-3 py-2 text-on-background focus:ring-0" required />
+          </div>
+          <button class="w-full rounded-full bg-primary py-3 font-medium text-on-primary" type="submit">Uložiť</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="bill-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-background/80 p-4 backdrop-blur-md">
+      <div class="w-full max-w-md rounded-2xl border border-outline/20 bg-surface-container p-5">
+        <div class="mb-4 flex items-center justify-between">
+          <h3 class="text-xl font-semibold text-primary">Nová faktúra</h3>
+          <button onclick="closeBillModal()" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <label class="mb-1 block text-sm text-on-surface-variant">Názov</label>
+            <input id="bill-name" class="w-full rounded-lg border-0 bg-surface-container-high px-3 py-2 text-on-background focus:ring-0" />
+          </div>
+          <div>
+            <label class="mb-1 block text-sm text-on-surface-variant">Suma (€)</label>
+            <input id="bill-amount" type="number" step="0.01" class="w-full rounded-lg border-0 bg-surface-container-high px-3 py-2 text-on-background focus:ring-0" />
+          </div>
+          <div>
+            <label class="mb-1 block text-sm text-on-surface-variant">Dátum splatnosti</label>
+            <input id="bill-date" type="date" class="w-full rounded-lg border-0 bg-surface-container-high px-3 py-2 text-on-background focus:ring-0" />
+          </div>
+          <button class="w-full rounded-full bg-primary py-3 font-medium text-on-primary" onclick="saveBill()">Uložiť faktúru</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const defaultState = {
+        transactions: [
+          { id: 1, desc: 'Mesačná mzda', amount: 2450, category: 'Príjem', date: '2024-01-01', type: 'income' },
+          { id: 2, desc: 'Nájom', amount: 1200, category: 'Faktúry', date: '2024-01-02', type: 'expense' },
+          { id: 3, desc: 'Potraviny', amount: 84.2, category: 'Jedlo', date: '2024-01-03', type: 'expense' }
+        ],
+        bills: [
+          { id: 1, name: 'Internet', amount: 45, date: '2024-01-10', paid: false },
+          { id: 2, name: 'Elektrina', amount: 92, date: '2024-01-08', paid: true }
+        ],
+        currentPage: 'dashboard',
+        currentFilter: 'Všetko'
+      };
+
+      let state = JSON.parse(localStorage.getItem('wealthpair_app_state')) || defaultState;
+
+      function saveState() {
+        localStorage.setItem('wealthpair_app_state', JSON.stringify(state));
+      }
+
+      function navigate(page) {
+        state.currentPage = page;
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(page + '-page').classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active', 'text-primary'));
+        const navButtons = document.querySelectorAll('.nav-item');
+        navButtons[["dashboard", "transactions", "bills", "stats"].indexOf(page)].classList.add('active', 'text-primary');
+        saveState();
+      }
+
+      function formatCurrency(value) {
+        return `€${Number(value).toLocaleString('sk-SK', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      }
+
+      function getCategoryEmoji(category) {
+        const map = { Jedlo:'🍔', Nákupy:'🛍️', Doprava:'🚗', Zábava:'🎬', Faktúry:'🧾', Príjem:'💰', Iné:'✨' };
+        return map[category] || '✨';
+      }
+
+      function calculateMetrics() {
+        const income = state.transactions.filter(t => t.category === 'Príjem').reduce((sum, t) => sum + Number(t.amount), 0);
+        const expenses = state.transactions.filter(t => t.category !== 'Príjem').reduce((sum, t) => sum + Number(t.amount), 0);
+        const reserved = state.bills.filter(b => !b.paid).reduce((sum, b) => sum + Number(b.amount), 0);
+        const balance = income - expenses;
+        const safeToSpend = balance - reserved;
+        return { income, expenses, reserved, balance, safeToSpend };
+      }
+
+      function renderDashboard() {
+        const metrics = calculateMetrics();
+        document.getElementById('safe-amount').textContent = metrics.safeToSpend.toLocaleString('sk-SK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('balance-value').textContent = formatCurrency(metrics.balance);
+        document.getElementById('reserved-value').textContent = formatCurrency(metrics.reserved);
+        document.getElementById('expenses-value').textContent = formatCurrency(metrics.expenses);
+
+        const safeMessage = document.getElementById('safe-message');
+        safeMessage.textContent = metrics.safeToSpend < 0 ? 'Prekročili ste rezervovaný limit. Pozrite sa na faktúry.' : 'Ste na dobrej ceste k mesačným cieľom.';
+
+        const list = document.getElementById('recent-activity');
+        list.innerHTML = '';
+        state.transactions.slice().reverse().slice(0, 4).forEach(item => {
+          const positive = item.category === 'Príjem';
+          const card = document.createElement('div');
+          card.className = 'flex items-center justify-between rounded-lg border border-outline/10 bg-surface-container-high px-3 py-2';
+          card.innerHTML = `
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container text-lg">${getCategoryEmoji(item.category)}</div>
+              <div>
+                <p class="font-medium text-on-background">${item.desc}</p>
+                <p class="text-xs text-on-surface-variant">${item.date}</p>
+              </div>
+            </div>
+            <p class="font-semibold ${positive ? 'text-secondary' : 'text-on-background'}">${positive ? '+' : '-'}${formatCurrency(item.amount).replace('€','€')}</p>
+          `;
+          list.appendChild(card);
+        });
+      }
+
+      function setFilter(filter) {
+        state.currentFilter = filter;
+        document.querySelectorAll('.category-pill').forEach(btn => {
+          btn.classList.remove('bg-primary', 'text-on-primary');
+          btn.classList.add('bg-surface-container', 'text-on-surface-variant');
+        });
+        const activeBtn = Array.from(document.querySelectorAll('.category-pill')).find(btn => btn.textContent.includes(filter) || (filter === 'Všetko' && btn.textContent.includes('Všetko')));
+        if (activeBtn) {
+          activeBtn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+          activeBtn.classList.add('bg-primary', 'text-on-primary');
+        }
+        renderTransactions();
+      }
+
+      function renderTransactions() {
+        const search = document.getElementById('transaction-search').value.toLowerCase();
+        const list = document.getElementById('transactions-list');
+        const filtered = state.transactions.filter(item => {
+          const matchesFilter = state.currentFilter === 'Všetko' || item.category === state.currentFilter;
+          const matchesSearch = item.desc.toLowerCase().includes(search) || item.category.toLowerCase().includes(search);
+          return matchesFilter && matchesSearch;
+        }).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        if (!filtered.length) {
+          list.innerHTML = '<div class="rounded-xl border border-dashed border-outline/30 p-8 text-center text-on-surface-variant">Žiadne transakcie.</div>';
+          return;
+        }
+
+        list.innerHTML = '';
+        filtered.forEach(item => {
+          const positive = item.category === 'Príjem';
+          const div = document.createElement('div');
+          div.className = 'glass-card rounded-xl p-3';
+          div.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="flex h-11 w-11 items-center justify-center rounded-full bg-surface-container-high text-lg">${getCategoryEmoji(item.category)}</div>
+                <div>
+                  <p class="font-medium text-on-background">${item.desc}</p>
+                  <p class="text-sm text-on-surface-variant">${item.category} • ${item.date}</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-semibold ${positive ? 'text-secondary' : 'text-on-background'}">${positive ? '+' : '-'}${formatCurrency(item.amount)}</p>
+                <div class="mt-1 flex gap-2">
+                  <button onclick="openTransactionModal('edit', ${item.id})" class="text-xs text-primary">Upraviť</button>
+                  <button onclick="deleteTransaction(${item.id})" class="text-xs text-error">Vymazať</button>
+                </div>
+              </div>
+            </div>
+          `;
+          list.appendChild(div);
+        });
+      }
+
+      function openTransactionModal(mode, id) {
+        const modal = document.getElementById('transaction-modal');
+        const form = document.getElementById('transaction-form');
+        const title = document.getElementById('modal-title');
+        if (mode === 'edit') {
+          const item = state.transactions.find(t => t.id === id);
+          if (!item) return;
+          document.getElementById('transaction-id').value = item.id;
+          document.getElementById('transaction-desc').value = item.desc;
+          document.getElementById('transaction-amount').value = item.amount;
+          document.getElementById('transaction-category').value = item.category;
+          document.getElementById('transaction-date').value = item.date;
+          title.textContent = 'Upraviť transakciu';
+        } else {
+          form.reset();
+          document.getElementById('transaction-id').value = '';
+          document.getElementById('transaction-date').value = new Date().toISOString().slice(0, 10);
+          title.textContent = 'Pridať transakciu';
+        }
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+
+      function closeTransactionModal() {
+        document.getElementById('transaction-modal').classList.add('hidden');
+        document.getElementById('transaction-modal').classList.remove('flex');
+      }
+
+      function deleteTransaction(id) {
+        state.transactions = state.transactions.filter(t => t.id !== id);
+        saveState();
+        renderAll();
+      }
+
+      document.getElementById('transaction-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const id = document.getElementById('transaction-id').value;
+        const payload = {
+          id: id ? Number(id) : Date.now(),
+          desc: document.getElementById('transaction-desc').value,
+          amount: Number(document.getElementById('transaction-amount').value),
+          category: document.getElementById('transaction-category').value,
+          date: document.getElementById('transaction-date').value,
+          type: document.getElementById('transaction-category').value === 'Príjem' ? 'income' : 'expense'
+        };
+        if (id) {
+          state.transactions = state.transactions.map(t => t.id === Number(id) ? payload : t);
+        } else {
+          state.transactions.push(payload);
+        }
+        saveState();
+        renderAll();
+        closeTransactionModal();
+      });
+
+      function renderBills() {
+        const list = document.getElementById('bills-list');
+        const metrics = calculateMetrics();
+        document.getElementById('bills-remaining').textContent = formatCurrency(metrics.balance - metrics.reserved);
+        list.innerHTML = '';
+        state.bills.slice().sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(bill => {
+          const div = document.createElement('div');
+          div.className = `glass-card rounded-xl p-3 ${bill.paid ? 'opacity-60' : ''}`;
+          div.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-medium text-on-background">${bill.name}</p>
+                <p class="text-sm text-on-surface-variant">Splatnosť ${bill.date}</p>
+              </div>
+              <div class="text-right">
+                <p class="font-semibold text-on-background">${formatCurrency(bill.amount)}</p>
+                <button onclick="toggleBill(${bill.id})" class="mt-1 text-xs ${bill.paid ? 'text-secondary' : 'text-primary'}">${bill.paid ? 'Označiť ako nevyplatené' : 'Označiť ako zaplatené'}</button>
+              </div>
+            </div>
+          `;
+          list.appendChild(div);
+        });
+      }
+
+      function openBillModal() {
+        document.getElementById('bill-modal').classList.remove('hidden');
+        document.getElementById('bill-modal').classList.add('flex');
+      }
+
+      function closeBillModal() {
+        document.getElementById('bill-modal').classList.add('hidden');
+        document.getElementById('bill-modal').classList.remove('flex');
+      }
+
+      function saveBill() {
+        const name = document.getElementById('bill-name').value;
+        const amount = Number(document.getElementById('bill-amount').value);
+        const date = document.getElementById('bill-date').value;
+        if (!name || !amount || !date) return;
+        state.bills.push({ id: Date.now(), name, amount, date, paid: false });
+        saveState();
+        renderBills();
+        closeBillModal();
+        document.getElementById('bill-name').value = '';
+        document.getElementById('bill-amount').value = '';
+        document.getElementById('bill-date').value = '';
+      }
+
+      function toggleBill(id) {
+        state.bills = state.bills.map(bill => bill.id === id ? { ...bill, paid: !bill.paid } : bill);
+        saveState();
+        renderBills();
+        renderDashboard();
+      }
+
+      function renderStats() {
+        const categories = ['Jedlo', 'Nákupy', 'Doprava', 'Zábava', 'Faktúry'];
+        const stats = categories.map(cat => ({ cat, total: state.transactions.filter(t => t.category === cat).reduce((sum, i) => sum + Number(i.amount), 0) }));
+        const list = document.getElementById('stats-list');
+        list.innerHTML = '';
+        stats.forEach(item => {
+          const max = Math.max(...stats.map(x => x.total), 1);
+          const width = Math.round((item.total / max) * 100);
+          const row = document.createElement('div');
+          row.className = 'space-y-1';
+          row.innerHTML = `
+            <div class="flex items-center justify-between text-sm">
+              <span>${item.cat}</span>
+              <span class="font-semibold text-primary">${formatCurrency(item.total)}</span>
+            </div>
+            <div class="h-2 w-full overflow-hidden rounded-full bg-surface-container">
+              <div class="h-full rounded-full bg-primary" style="width:${width}%"></div>
+            </div>
+          `;
+          list.appendChild(row);
+        });
+      }
+
+      function renderAll() {
+        renderDashboard();
+        renderTransactions();
+        renderBills();
+        renderStats();
+        saveState();
+      }
+
+      document.getElementById('transaction-search').addEventListener('input', renderTransactions);
+      window.addEventListener('DOMContentLoaded', () => {
+        if (!state.transactions.length && !state.bills.length) {
+          state = JSON.parse(JSON.stringify(defaultState));
+        }
+        navigate(state.currentPage || 'dashboard');
+        setFilter(state.currentFilter || 'Všetko');
+        renderAll();
+      });
+    </script>
+  </body>
+</html>
