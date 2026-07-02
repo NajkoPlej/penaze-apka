@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WealthPair | Bills & Stats</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#43ed9e",
+                        "on-background": "#e2e2e8",
+                        "on-primary-container": "#f7f6ff",
+                        "on-surface-variant": "#c3c5d8",
+                        "secondary-fixed": "#59fead",
+                        "surface-dim": "#111317",
+                        "on-secondary-fixed": "#002111",
+                        "secondary-container": "#00d084",
+                        "secondary-fixed-dim": "#31e193",
+                        "outline": "#8d90a2",
+                        "surface-bright": "#37393e",
+                        "primary-fixed-dim": "#b7c4ff",
+                        "surface-container-highest": "#333539",
+                        "primary": "#b7c4ff",
+                        "surface-container-lowest": "#0c0e12",
+                        "inverse-on-surface": "#2f3035",
+                        "on-primary-fixed-variant": "#0039b5",
+                        "on-tertiary-container": "#fff5f4",
+                        "tertiary-fixed": "#ffdad7",
+                        "on-tertiary-fixed-variant": "#930014",
+                        "tertiary-fixed-dim": "#ffb3ae",
+                        "on-primary-fixed": "#001551",
+                        "surface-tint": "#b7c4ff",
+                        "on-tertiary": "#68000b",
+                        "background": "#111317",
+                        "on-error-container": "#ffdad6",
+                        "error": "#ffb4ab",
+                        "on-primary": "#002681",
+                        "surface-container-low": "#1a1c20",
+                        "error-container": "#93000a",
+                        "tertiary": "#ffb3ae",
+                        "tertiary-container": "#d62f34",
+                        "surface": "#111317",
+                        "inverse-primary": "#004ceb",
+                        "inverse-surface": "#e2e2e8",
+                        "outline-variant": "#434656",
+                        "on-surface": "#e2e2e8",
+                        "on-secondary-fixed-variant": "#005231",
+                        "on-secondary": "#003920",
+                        "primary-container": "#2d62ff",
+                        "on-error": "#690005",
+                        "on-tertiary-fixed": "#410004",
+                        "surface-container": "#1e2024",
+                        "primary-fixed": "#dce1ff",
+                        "surface-container-high": "#282a2e",
+                        "on-secondary-container": "#005231",
+                        "surface-variant": "#333539"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        "margin-desktop": "40px",
+                        "stack-lg": "32px",
+                        "margin-mobile": "20px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "label-numeric": ["JetBrains Mono"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-numeric": ["14px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "title-md": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0F1115;
+            color: #e2e2e8;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(28, 31, 38, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(183, 196, 255, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #333539;
+            border-radius: 10px;
+        }
+        .pulse-tertiary {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-lg text-body-lg min-h-screen pb-32">
+<!-- Top AppBar -->
+<header class="w-full sticky top-0 bg-surface/60 backdrop-blur-xl z-50 flex justify-between items-center px-margin-mobile py-stack-sm shadow-none">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
+<img class="w-full h-full object-cover" data-alt="A high-end portrait of a sophisticated modern couple, shot in soft cinematic lighting with a shallow depth of field. The aesthetic is clean, corporate, and minimalist, featuring neutral tones and a premium professional atmosphere. The couple appears empowered and financially savvy, perfectly aligned with a luxury wealth management brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8UyLFqqnqTGoLRQl0ZLcxw1rJ9BRhDFu_2VJG7IjTq1dsvwxwLjC4F3WvkGxqHm59h9V83muEN32w_GiNR0NkZr44ltBK8Os-98IyEahQ5RE9Ksbmm6aOFoz_6NZX4j5wY1egoY0K2ht3AqGW0FhKCfdDHKlDU03e37MTA0VkAiIEvfDNlJhqcWq3_qfRUSwoUqSKxTI-b6sr0XblWaZf8N437HixpVx5OWJDkE5yaJS2qZK_FE8_YvojFBYlbuQMxF3XcJfb8i0"/>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">WealthPair</h1>
+</div>
+<button class="hover:opacity-80 transition-opacity active:scale-95 transition-transform text-primary">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+</header>
+<main class="px-margin-mobile pt-stack-lg max-w-lg mx-auto space-y-stack-lg">
+<!-- Safe to Spend Highlight Card -->
+<section class="rounded-xl p-6 bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20 shadow-lg">
+<h2 class="font-title-md text-title-md text-on-surface-variant mb-2">Remaining Money</h2>
+<div class="font-display-lg text-display-lg text-primary" id="remaining-money">$0.00</div>
+<div class="mt-4 grid grid-cols-2 gap-4">
+<div>
+<p class="text-body-sm text-on-surface-variant">Total Income</p>
+<p class="font-label-numeric text-label-numeric text-secondary" id="total-income">+$0.00</p>
+</div>
+<div>
+<p class="text-body-sm text-on-surface-variant">Reserved for Bills</p>
+<p class="font-label-numeric text-label-numeric text-tertiary" id="total-unpaid">-$0.00</p>
+</div>
+</div>
+</section>
+<!-- Stats Section: Spending by Category -->
+<section class="space-y-4">
+<div class="flex justify-between items-end">
+<h2 class="font-title-md text-title-md">Spending Stats</h2>
+<span class="text-body-sm text-on-surface-variant">This Month</span>
+</div>
+<div class="glass-card rounded-xl p-5 space-y-5">
+<div class="space-y-2">
+<div class="flex justify-between text-body-sm">
+<span>Housing & Rent</span>
+<span class="font-label-numeric">$1,850.00</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 65%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-body-sm">
+<span>Food & Dining</span>
+<span class="font-label-numeric">$620.00</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary" style="width: 42%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-body-sm">
+<span>Transportation</span>
+<span class="font-label-numeric">$310.00</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary" style="width: 88%"></div>
+</div>
+<p class="text-[10px] text-tertiary flex items-center gap-1 pulse-tertiary">
+<span class="material-symbols-outlined text-[12px]">warning</span> Near monthly limit
+                    </p>
+</div>
+</div>
+</section>
+<!-- Bills Section -->
+<section class="space-y-4">
+<div class="flex justify-between items-center">
+<h2 class="font-title-md text-title-md">Upcoming Bills</h2>
+<button class="text-primary flex items-center gap-1 text-body-sm font-semibold hover:opacity-80 transition-opacity" onclick="openBillModal()">
+<span class="material-symbols-outlined text-sm">add</span> Add Bill
+                </button>
+</div>
+<div class="space-y-3" id="bills-container">
+<!-- Bills injected here via JS -->
+</div>
+</section>
+</main>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-surface/80 backdrop-blur-[20px] shadow-[0px_-10px_30px_rgba(0,0,0,0.5)] z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary/80 transition-colors active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-numeric text-label-numeric">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary/80 transition-colors active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-numeric text-label-numeric">Transactions</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary relative after:content-[''] after:w-1 after:h-1 after:bg-primary after:rounded-full after:mt-1 hover:text-primary/80 transition-colors active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-numeric text-label-numeric">Bills</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary/80 transition-colors active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="font-label-numeric text-label-numeric">Stats</span>
+</a>
+</nav>
+<!-- Add Bill Modal (Simplified) -->
+<div class="fixed inset-0 z-[100] hidden flex items-center justify-center px-6" id="bill-modal">
+<div class="absolute inset-0 bg-background/80 backdrop-blur-md" onclick="closeBillModal()"></div>
+<div class="relative glass-card w-full max-w-sm rounded-xl p-8 space-y-6">
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">New Bill</h3>
+<div class="space-y-4">
+<div class="space-y-2">
+<label class="text-body-sm text-on-surface-variant">Bill Name</label>
+<input class="w-full bg-surface-container border-none focus:ring-0 border-b-2 border-transparent focus:border-primary transition-all rounded-lg text-on-surface" id="bill-name" placeholder="e.g. Netflix" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-body-sm text-on-surface-variant">Amount ($)</label>
+<input class="w-full bg-surface-container border-none focus:ring-0 border-b-2 border-transparent focus:border-primary transition-all rounded-lg text-on-surface" id="bill-amount" placeholder="0.00" type="number"/>
+</div>
+<div class="space-y-2">
+<label class="text-body-sm text-on-surface-variant">Due Date</label>
+<input class="w-full bg-surface-container border-none focus:ring-0 border-b-2 border-transparent focus:border-primary transition-all rounded-lg text-on-surface" id="bill-date" type="date"/>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 py-3 text-on-surface font-semibold border border-outline/30 rounded-full hover:bg-surface-variant transition-colors" onclick="closeBillModal()">Cancel</button>
+<button class="flex-1 py-3 bg-primary text-on-primary font-semibold rounded-full hover:opacity-90 transition-opacity" onclick="addBill()">Save</button>
+</div>
+</div>
+</div>
+<script>
+        // State Management
+        let bills = JSON.parse(localStorage.getItem('wealthpair_bills')) || [
+            { id: 1, name: 'Premium Cloud Storage', amount: 12.99, date: '2023-11-28', paid: false },
+            { id: 2, name: 'City Power & Gas', amount: 145.50, date: '2023-11-15', paid: true },
+            { id: 3, name: 'Wellness Center Pro', amount: 85.00, date: '2023-11-22', paid: false }
+        ];
+
+        let income = 5800.00;
+        let baseExpenses = 2780.00;
+
+        function updateUI() {
+            const container = document.getElementById('bills-container');
+            container.innerHTML = '';
+
+            let unpaidTotal = 0;
+
+            bills.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(bill => {
+                if (!bill.paid) unpaidTotal += parseFloat(bill.amount);
+
+                const billEl = document.createElement('div');
+                billEl.className = `glass-card rounded-lg p-4 flex items-center justify-between transition-all duration-300 ${bill.paid ? 'opacity-50 grayscale' : ''}`;
+                
+                const formattedDate = new Date(bill.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                
+                billEl.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined">${bill.paid ? 'check_circle' : 'pending_actions'}</span>
+                        </div>
+                        <div>
+                            <h4 class="font-title-md text-on-surface">${bill.name}</h4>
+                            <p class="text-body-sm text-on-surface-variant">Due ${formattedDate}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-label-numeric text-on-surface">$${parseFloat(bill.amount).toFixed(2)}</p>
+                        <button onclick="togglePaid(${bill.id})" class="text-[10px] uppercase tracking-wider font-bold ${bill.paid ? 'text-secondary' : 'text-primary'} hover:underline mt-1">
+                            ${bill.paid ? 'Mark Unpaid' : 'Mark Paid'}
+                        </button>
+                    </div>
+                `;
+                container.appendChild(billEl);
+            });
+
+            // Update Summary
+            const remaining = income - baseExpenses - unpaidTotal;
+            document.getElementById('remaining-money').innerText = `$${remaining.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('total-income').innerText = `+$${income.toLocaleString()}`;
+            document.getElementById('total-unpaid').innerText = `-$${unpaidTotal.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+
+            localStorage.setItem('wealthpair_bills', JSON.stringify(bills));
+        }
+
+        function togglePaid(id) {
+            const bill = bills.find(b => b.id === id);
+            if (bill) {
+                bill.paid = !bill.paid;
+                updateUI();
+            }
+        }
+
+        function openBillModal() {
+            document.getElementById('bill-modal').classList.remove('hidden');
+        }
+
+        function closeBillModal() {
+            document.getElementById('bill-modal').classList.add('hidden');
+        }
+
+        function addBill() {
+            const name = document.getElementById('bill-name').value;
+            const amount = document.getElementById('bill-amount').value;
+            const date = document.getElementById('bill-date').value;
+
+            if (name && amount && date) {
+                const newBill = {
+                    id: Date.now(),
+                    name: name,
+                    amount: parseFloat(amount),
+                    date: date,
+                    paid: false
+                };
+                bills.push(newBill);
+                updateUI();
+                closeBillModal();
+                
+                // Reset fields
+                document.getElementById('bill-name').value = '';
+                document.getElementById('bill-amount').value = '';
+                document.getElementById('bill-date').value = '';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', updateUI);
+
+        // Subtle hover effects and interactions
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.style.transform = 'scale(0.98)';
+            });
+            card.addEventListener('mouseup', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

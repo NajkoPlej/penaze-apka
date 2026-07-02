@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WealthPair Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0F1115;
+            color: #e2e2e8;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .glass-card {
+            background: rgba(28, 31, 38, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(183, 196, 255, 0.1);
+        }
+        .safe-to-spend-gradient {
+            background: linear-gradient(135deg, rgba(183, 196, 255, 0.1) 0%, rgba(67, 237, 158, 0.1) 100%);
+        }
+        .safe-to-spend-warning {
+            background: linear-gradient(135deg, rgba(255, 179, 174, 0.15) 0%, rgba(214, 47, 52, 0.15) 100%);
+            border: 1px solid rgba(255, 180, 171, 0.3);
+        }
+        /* Custom scrollbar for activity list */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#43ed9e",
+                        "on-background": "#e2e2e8",
+                        "on-primary-container": "#f7f6ff",
+                        "on-surface-variant": "#c3c5d8",
+                        "secondary-fixed": "#59fead",
+                        "surface-dim": "#111317",
+                        "on-secondary-fixed": "#002111",
+                        "secondary-container": "#00d084",
+                        "secondary-fixed-dim": "#31e193",
+                        "outline": "#8d90a2",
+                        "surface-bright": "#37393e",
+                        "primary-fixed-dim": "#b7c4ff",
+                        "surface-container-highest": "#333539",
+                        "primary": "#b7c4ff",
+                        "surface-container-lowest": "#0c0e12",
+                        "inverse-on-surface": "#2f3035",
+                        "on-primary-fixed-variant": "#0039b5",
+                        "on-tertiary-container": "#fff5f4",
+                        "tertiary-fixed": "#ffdad7",
+                        "on-tertiary-fixed-variant": "#930014",
+                        "tertiary-fixed-dim": "#ffb3ae",
+                        "on-primary-fixed": "#001551",
+                        "surface-tint": "#b7c4ff",
+                        "on-tertiary": "#68000b",
+                        "background": "#111317",
+                        "on-error-container": "#ffdad6",
+                        "error": "#ffb4ab",
+                        "on-primary": "#002681",
+                        "surface-container-low": "#1a1c20",
+                        "error-container": "#93000a",
+                        "tertiary": "#ffb3ae",
+                        "tertiary-container": "#d62f34",
+                        "surface": "#111317",
+                        "inverse-primary": "#004ceb",
+                        "inverse-surface": "#e2e2e8",
+                        "outline-variant": "#434656",
+                        "on-surface": "#e2e2e8",
+                        "on-secondary-fixed-variant": "#005231",
+                        "on-secondary": "#003920",
+                        "primary-container": "#2d62ff",
+                        "on-error": "#690005",
+                        "on-tertiary-fixed": "#410004",
+                        "surface-container": "#1e2024",
+                        "primary-fixed": "#dce1ff",
+                        "surface-container-high": "#282a2e",
+                        "on-secondary-container": "#005231",
+                        "surface-variant": "#333539"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        "margin-desktop": "40px",
+                        "stack-lg": "32px",
+                        "margin-mobile": "20px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "label-numeric": ["JetBrains Mono"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-numeric": ["14px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "title-md": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="w-full sticky top-0 bg-surface/60 backdrop-blur-xl flex justify-between items-center px-margin-mobile py-stack-sm w-full z-50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a modern couple in their 30s, smiling warmly, captured with high-end soft lighting. The background is a minimalist, dark architectural space that echoes a premium financial brand aesthetic. The lighting creates a gentle rim light around their silhouettes, emphasizing trust and collaboration. Deep charcoal tones and subtle blue highlights dominate the frame." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlw2YxWudRbviHlL7QzPXMcThnkj1Gk7j0wBIomspxd5gV02TsylmcfB9fNH-b5bVS_rxIszsTL09l3Z2ELEDtMjt7r0JeOHiMnpKfa07abNZ34rT27IQe6HZ7gC06rSigqwUGjXnVR8uTBRYGFJKNvdusdPVIyNKJEhH5W1uQEpMQ3_XcSza-I8m3hceA1bIZnPT6BJBVbBYLfklHJYa62eVGoaF7CjJS014nRhpQMhjWSFG6NsKS_oaQeJRU5T_uwp5SGEceKkE"/>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">WealthPair</h1>
+</div>
+<button class="p-2 rounded-full hover:opacity-80 transition-opacity active:scale-95 transition-transform text-primary">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+</header>
+<main class="px-margin-mobile pt-stack-md max-w-lg mx-auto">
+<!-- Safe to Spend Card -->
+<section class="mb-stack-lg" id="safe-to-spend-container">
+<div class="rounded-xl p-stack-lg safe-to-spend-gradient shadow-[0px_10px_30px_rgba(0,0,0,0.5)] transition-all duration-500" id="safe-card">
+<div class="flex items-center justify-between mb-2">
+<p class="font-title-md text-title-md text-on-surface-variant">Safe to Spend</p>
+<span class="material-symbols-outlined text-secondary" id="safe-indicator">verified_user</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="font-display-lg text-display-lg text-primary">$</span>
+<span class="font-display-lg text-display-lg text-on-background" id="safe-amount">0.00</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2" id="safe-message">You're on track for your monthly goals.</p>
+</div>
+</section>
+<!-- Summary Grid -->
+<section class="grid grid-cols-1 gap-gutter mb-stack-lg">
+<div class="grid grid-cols-2 gap-gutter">
+<div class="glass-card rounded-lg p-stack-md">
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-1">Balance</p>
+<p class="font-label-numeric text-label-numeric text-on-background text-lg" id="total-balance">$0.00</p>
+</div>
+<div class="glass-card rounded-lg p-stack-md">
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-1">Reserved</p>
+<p class="font-label-numeric text-label-numeric text-tertiary text-lg" id="total-reserved">$0.00</p>
+</div>
+</div>
+<div class="glass-card rounded-lg p-stack-md flex justify-between items-center">
+<div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-1">Monthly Expenses</p>
+<p class="font-label-numeric text-label-numeric text-on-background text-lg" id="total-expenses">$0.00</p>
+</div>
+<div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary transition-all duration-700" id="expense-progress" style="width: 0%"></div>
+</div>
+</div>
+</section>
+<!-- Quick Actions -->
+<section class="flex gap-3 mb-stack-lg overflow-x-auto hide-scrollbar pb-2">
+<button class="flex-none bg-primary text-on-primary px-6 py-3 rounded-full font-title-md text-sm flex items-center gap-2 active:scale-95 transition-transform whitespace-nowrap" onclick="openModal('income')">
+<span class="material-symbols-outlined text-[20px]">add_circle</span> Add Income
+            </button>
+<button class="flex-none border border-outline-variant text-on-background px-6 py-3 rounded-full font-title-md text-sm flex items-center gap-2 active:scale-95 transition-transform whitespace-nowrap" onclick="openModal('expense')">
+<span class="material-symbols-outlined text-[20px]">remove_circle</span> Add Expense
+            </button>
+<button class="flex-none border border-outline-variant text-on-background px-6 py-3 rounded-full font-title-md text-sm flex items-center gap-2 active:scale-95 transition-transform whitespace-nowrap" onclick="openModal('bill')">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span> Add Bill
+            </button>
+</section>
+<!-- Recent Activity -->
+<section>
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-title-md text-title-md">Recent Activity</h3>
+<button class="text-primary font-body-sm text-sm">See All</button>
+</div>
+<div class="space-y-3" id="activity-list">
+<!-- Activity items will be injected here -->
+<div class="py-12 flex flex-col items-center justify-center opacity-60" id="empty-state">
+<div class="w-24 h-24 mb-4 relative">
+<!-- CSS Illustration for Empty State -->
+<div class="absolute inset-0 border-2 border-dashed border-outline-variant rounded-full animate-pulse"></div>
+<div class="absolute inset-4 bg-surface-container rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-outline">query_stats</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm">No transactions yet today.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Modal (Add Transaction) -->
+<div class="fixed inset-0 bg-background/80 backdrop-blur-md z-[100] hidden items-end sm:items-center justify-center p-4" id="modal-overlay">
+<div class="bg-surface-container rounded-xl w-full max-w-md p-stack-lg shadow-2xl border border-outline-variant/20 transform transition-transform translate-y-full" id="modal-content">
+<div class="flex justify-between items-center mb-stack-lg">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile" id="modal-title">Add Income</h2>
+<button class="p-2 text-on-surface-variant" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
+</div>
+<div class="space-y-stack-md">
+<div>
+<label class="block font-body-sm text-on-surface-variant mb-2">Amount</label>
+<input class="w-full bg-surface-container-high border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 text-display-lg font-label-numeric p-0 py-2" id="input-amount" placeholder="0.00" type="number"/>
+</div>
+<div>
+<label class="block font-body-sm text-on-surface-variant mb-2">Description</label>
+<input class="w-full bg-surface-container-high border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 font-body-lg p-0 py-2" id="input-desc" placeholder="Rent, Grocery, Salary..." type="text"/>
+</div>
+<button class="w-full bg-primary text-on-primary py-4 rounded-full font-title-md mt-stack-lg active:scale-95 transition-transform" onclick="saveTransaction()">
+                    Confirm Transaction
+                </button>
+</div>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-surface/80 backdrop-blur-[20px] shadow-[0px_-10px_30px_rgba(0,0,0,0.5)] z-50">
+<a class="flex flex-col items-center justify-center text-primary relative after:content-[''] after:w-1 after:h-1 after:bg-primary after:rounded-full after:mt-1 hover:text-primary/80 transition-colors active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-numeric text-label-numeric">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary/80 transition-colors active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-numeric text-label-numeric">Transactions</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary/80 transition-colors active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-numeric text-label-numeric">Bills</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary/80 transition-colors active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="font-label-numeric text-label-numeric">Stats</span>
+</a>
+</nav>
+<script>
+        // Data Management
+        let state = {
+            transactions: JSON.parse(localStorage.getItem('wp_transactions')) || [],
+            budget: 2500, // Monthly budget example
+            currentModalType: 'income'
+        };
+
+        const updateLocalStorage = () => {
+            localStorage.setItem('wp_transactions', JSON.stringify(state.transactions));
+        };
+
+        const calculateMetrics = () => {
+            const income = state.transactions
+                .filter(t => t.type === 'income')
+                .reduce((acc, t) => acc + t.amount, 0);
+            
+            const expenses = state.transactions
+                .filter(t => t.type === 'expense' || t.type === 'bill')
+                .reduce((acc, t) => acc + t.amount, 0);
+
+            const balance = income - expenses;
+            const reserved = state.transactions
+                .filter(t => t.type === 'bill')
+                .reduce((acc, t) => acc + t.amount, 0);
+            
+            // "Safe to Spend" Logic: Balance - Planned Bills (simple version)
+            const safeToSpend = balance - reserved;
+
+            return { income, expenses, balance, reserved, safeToSpend };
+        };
+
+        const renderUI = () => {
+            const metrics = calculateMetrics();
+            
+            // Update Text Elements
+            document.getElementById('total-balance').textContent = `$${metrics.balance.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            document.getElementById('total-reserved').textContent = `$${metrics.reserved.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            document.getElementById('total-expenses').textContent = `$${metrics.expenses.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            document.getElementById('safe-amount').textContent = metrics.safeToSpend.toLocaleString('en-US', {minimumFractionDigits: 2});
+
+            // Expense Progress
+            const progress = Math.min((metrics.expenses / state.budget) * 100, 100);
+            document.getElementById('expense-progress').style.width = `${progress}%`;
+            if (progress > 90) document.getElementById('expense-progress').classList.replace('bg-secondary', 'bg-error');
+            else document.getElementById('expense-progress').classList.replace('bg-error', 'bg-secondary');
+
+            // Safe to Spend Card Logic
+            const safeCard = document.getElementById('safe-card');
+            const safeIndicator = document.getElementById('safe-indicator');
+            const safeMsg = document.getElementById('safe-message');
+
+            if (metrics.safeToSpend < 0) {
+                safeCard.className = 'rounded-xl p-stack-lg safe-to-spend-warning shadow-[0px_10px_30px_rgba(0,0,0,0.5)] transition-all duration-500';
+                safeIndicator.textContent = 'warning';
+                safeIndicator.className = 'material-symbols-outlined text-error';
+                safeMsg.textContent = 'Overspent! Check your reserved funds.';
+            } else {
+                safeCard.className = 'rounded-xl p-stack-lg safe-to-spend-gradient shadow-[0px_10px_30px_rgba(0,0,0,0.5)] transition-all duration-500';
+                safeIndicator.textContent = 'verified_user';
+                safeIndicator.className = 'material-symbols-outlined text-secondary';
+                safeMsg.textContent = "You're on track for your monthly goals.";
+            }
+
+            // Transaction List
+            const list = document.getElementById('activity-list');
+            const empty = document.getElementById('empty-state');
+            
+            // Remove existing items (except empty state)
+            const currentItems = list.querySelectorAll('.transaction-item');
+            currentItems.forEach(i => i.remove());
+
+            if (state.transactions.length === 0) {
+                empty.style.display = 'flex';
+            } else {
+                empty.style.display = 'none';
+                state.transactions.slice().reverse().slice(0, 5).forEach(t => {
+                    const div = document.createElement('div');
+                    div.className = 'transaction-item glass-card rounded-lg p-stack-md flex justify-between items-center animate-in fade-in slide-in-from-bottom-4 duration-500';
+                    const isPositive = t.type === 'income';
+                    
+                    div.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary">
+                                <span class="material-symbols-outlined">${t.type === 'income' ? 'arrow_downward' : t.type === 'bill' ? 'event_note' : 'shopping_bag'}</span>
+                            </div>
+                            <div>
+                                <p class="font-body-lg text-on-background">${t.desc}</p>
+                                <p class="font-body-sm text-on-surface-variant text-xs">${new Date(t.date).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                        <p class="font-label-numeric text-label-numeric ${isPositive ? 'text-secondary' : 'text-on-background'}">
+                            ${isPositive ? '+' : '-'}$${t.amount.toLocaleString()}
+                        </p>
+                    `;
+                    list.appendChild(div);
+                });
+            }
+        };
+
+        // Modal Logic
+        const openModal = (type) => {
+            state.currentModalType = type;
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+            const title = document.getElementById('modal-title');
+            
+            title.textContent = `Add ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            setTimeout(() => content.classList.remove('translate-y-full'), 10);
+        };
+
+        const closeModal = () => {
+            const overlay = document.getElementById('modal-overlay');
+            const content = document.getElementById('modal-content');
+            content.classList.add('translate-y-full');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+                document.getElementById('input-amount').value = '';
+                document.getElementById('input-desc').value = '';
+            }, 300);
+        };
+
+        const saveTransaction = () => {
+            const amt = parseFloat(document.getElementById('input-amount').value);
+            const desc = document.getElementById('input-desc').value || 'Untitled';
+            
+            if (isNaN(amt) || amt <= 0) return alert('Please enter a valid amount');
+
+            state.transactions.push({
+                id: Date.now(),
+                type: state.currentModalType,
+                amount: amt,
+                desc: desc,
+                date: new Date().toISOString()
+            });
+
+            updateLocalStorage();
+            renderUI();
+            closeModal();
+        };
+
+        // Init
+        window.addEventListener('DOMContentLoaded', renderUI);
+    </script>
+</body></html>
